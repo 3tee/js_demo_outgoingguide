@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="renderer" content="webkit" />
+
+		<script type="text/javascript" src="js/cn.tee3.avd-2.5.0.0.min.js?20160415021957"></script>
+		<title>服务器外呼rtsp和H323 Demo</title>
+	</head>
+
+	<body>			
+		<div id="outgoingDiv" style="width: 800px;border: solid 1px black;height: 800px;margin: 0px auto;">
+			<div id="operationDiv" style="width: auto;border-bottom: solid 1px black;height: 300px;">
+				<div id="inputDiv" style="width: 69%;height: 100%;float: left;border-right: solid 1px black;font-size: 22px;padding: 0 0 0 20px;">
+					<h5 style="margin-top: 20px;margin-bottom: 10px;">信息输入</h5>
+					<span style="font-size: 14px;">*注：此处房间Id和用户Id已自动生成，<span style="color: red;">必须填写的项已用红色字体标识。</span></span>
+					<br>
+					房间Id:<input type="text" placeholder="请输入房间Id" value="" id="roomId" name="roomId" disabled/>&nbsp;&nbsp;
+					<br>
+					用户Id:<input type="text" placeholder="请输入用户Id" value="" id="userId" name="userId" />&nbsp;&nbsp;
+					<br>
+					用户名:<input type="text" placeholder="请输入用户名" value="" id="userName" name="userName" />&nbsp;&nbsp;
+					<br>
+					<span style="color: red;">摄像头地址</span>：
+					<input style="width: 350px;" type="text" placeholder="请输入用户地址,如rtsp://127.0.0.1" value="rtsp://192.168.1.121:554/h264/ch1/main/av_stream" id="userAddress" name="userAddress" />&nbsp;&nbsp;
+					<br>
+					参数,如摄像头用户名、摄像头密码、辅流地址等：
+					<div id="optionDiv" style="font-size: 16px;padding-left: 20px;">
+						——<span style="color: red;">摄像头用户名</span>：<input type="text" placeholder="请输入摄像头用户名" value="admin" id="loginName" name="loginName" />&nbsp;&nbsp;
+						<br>
+						——<span style="color: red;">摄像头密码</span>：<input type="text" placeholder="请输入摄像头密码" value="Hik12345" id="loginPassword" name="loginPassword" />&nbsp;&nbsp;
+						<br>
+						——辅流地址：<input type="text" placeholder="请输入辅流地址" value="" id="assAddress" name="assAddress" />&nbsp;&nbsp;
+					</div>
+				</div>
+				<div id="buttonDiv" style="width: 27%;height: 100%;float: left;padding: 0 0 0 10px;">
+					<h3>接口按钮</h3>
+					<div>
+						<input type="button" value="导入外部设备" onclick="createOutgoingUser();" />
+						<br>
+						<input type="button" value="停止导入设备" onclick="destroyOutgoingUser();" />
+						<br>
+						<input type="button" value="获取房间内所有外部设备" onclick="getOutgoingUsers();" />
+						<br>
+					</div>
+				</div>
+			</div>
+			
+			<div id="showDiv" style="width: auto;height: 400px;border-bottom: solid 1px black;">
+				<div id="userShowDiv" style="width: 27%;height: 100%;float: left;border-right: solid 1px black;padding: 0 0 0 20px;">
+					<h3>房间内外部设备列表</h3>
+					<div id="deviceList">
+					</div>
+				</div>
+				<div id="mediaDiv" style="width: 69%;height: 100%;float: left;padding: 0 0 0 10px;">
+					<h3>视音频窗口</h3>
+					<div>
+						<video id="remoteVideo" width="500" height="350" muted autoplay></video>
+						<audio id="remoteAudio" autoplay></audio>
+					</div>
+				</div>
+			</div>
+			
+			<div id="logDiv" style="width: auto;height: 100px;padding: 0 0 0 20px;">
+				<h3>日志结果展示：</h3>
+				<div id="resultShow">
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="js/sha.js"></script>
+		<script type="text/javascript" src="js/restJS.js"></script>
+		<script type="text/javascript" src="js/outgoing.js"></script>
+	</body>
+
+</html>
