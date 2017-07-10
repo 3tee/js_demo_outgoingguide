@@ -3,12 +3,45 @@ var AVDEngine = ModuleBase.use(ModulesEnum.avdEngine);
 var avdEngine = new AVDEngine();
 
 //服务器uri和rest接口uri，此处使用的是3tee的测试服务器地址
-var serverURI = "192.168.1.241";
+//服务器地址的两种写入方式，写死或者从demo.3tee.cn/demo中获取
+var serverURI = null;
 var restURI = serverURI;
+var accessKey = null;
+var secretKey = null;
+//var serverURI = "nice2meet.cn";//可以写死服务器地址
+//var accessKey = "demo_access";//可以写死key
+//var secretKey = "demo_secret";
 
-//access_key和secret_key用于生成访问令牌，后续的所有rest接口都需要传入访问令牌accessToken
-var accessKey = "demo_access";
-var secretKey = "demo_secret";
+function demoGetServerUrl(){//可以通过demo.3tee.cn/demo获取
+	var deferred = when.defer();
+	var demoUrl = protocolStr + "//demo.3tee.cn/demo/avd_get_params?apptype=rtsp&callback=?";
+	$.ajax({
+		type: "get",
+		url: demoUrl,
+		dataType: "jsonp",
+		timeout: 5000,
+		success: function(data) {
+			deferred.resolve(data);
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			log.info("ajax (avd/api/admin/getAccessToken) errorCode:" + XMLHttpRequest.status + ",errorMsg:" + XMLHttpRequest.statusText);
+			var error = {};
+			error.code = XMLHttpRequest.status;
+			error.message = XMLHttpRequest.statusText;
+			deferred.reject(error);
+		}
+	});
+	return deferred.promise;
+}
+
+demoGetServerUrl().then(function(data) {
+	showLog("获取demo服务器地址成功");
+	serverURI = data.server_uri;
+	restURI = serverURI;
+	accessKey = data.access_key;
+	secretKey = data.secret_key;
+	doGetAccessToken();
+}).otherwise(alertError);
 
 var accessToken = null;
 
@@ -54,19 +87,21 @@ function getAccessToken() {
 	return deferred.promise;
 };
 
-getAccessToken().then(function(_accessToken) {
-	showLog("生成访问令牌成功");
-	accessToken = _accessToken;
-	if(roomId == null || roomId == 0){     //roomId不存在时，创建新房间
-		try {
-			createRoom();
-		} catch(error) {
-			alertError(error);
+function doGetAccessToken(){
+	getAccessToken().then(function(_accessToken) {
+		showLog("生成访问令牌成功");
+		accessToken = _accessToken;
+		if(roomId == null || roomId == 0){     //roomId不存在时，创建新房间
+			try {
+				createRoom();
+			} catch(error) {
+				alertError(error);
+			}
+		} else {      //存在roomId，直接加会
+			joinRoom(accessToken,roomId);
 		}
-	} else {      //存在roomId，直接加会
-		joinRoom(accessToken,roomId);
-	}
-}).otherwise(alertError);
+	}).otherwise(alertError);
+}
 
 //2.创建一个新房间
 function doCreateRoom(_accessToken) {
